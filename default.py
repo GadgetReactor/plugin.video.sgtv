@@ -8,7 +8,6 @@ __url__ = "http://www.gadgetreactor.com/portfolio/sgtv"
 settings = xbmcaddon.Addon(id='plugin.video.sgtv')
 
 THUMBNAIL_PATH = os.path.join( settings.getAddonInfo( 'path' ), 'resources', 'media')
-#channel-icons
 
 def open_url(url):
 	retries = 0
@@ -40,7 +39,7 @@ def open_url(url):
 		
 def main():
 	
-	li=xbmcgui.ListItem("1. Newest", thumbnailImage=os.path.join(THUMBNAIL_PATH, 'newest.png'))
+	li=xbmcgui.ListItem("Newest", thumbnailImage=os.path.join(THUMBNAIL_PATH, 'newest.png'))
 	u=sys.argv[0]+"?mode=4&channel=new&show=all"
 	xbmcplugin.addDirectoryItem(addon_handle,u,li,True)
 
@@ -52,19 +51,19 @@ def main():
 	u=sys.argv[0]+"?mode=3&channel=channel8"
 	xbmcplugin.addDirectoryItem(addon_handle,u,li,True)
 	
-	li=xbmcgui.ListItem("4. Channel U",iconImage="DefaultVideo.png", thumbnailImage=os.path.join(THUMBNAIL_PATH, 'channelu.jpg'))
+	li=xbmcgui.ListItem("Channel U",iconImage="DefaultVideo.png", thumbnailImage=os.path.join(THUMBNAIL_PATH, 'channelu.jpg'))
 	u=sys.argv[0]+"?mode=3&channel=channelu"
 	xbmcplugin.addDirectoryItem(addon_handle,u,li,True)
 
-	li=xbmcgui.ListItem("5. Okto",iconImage="DefaultVideo.png", thumbnailImage=os.path.join(THUMBNAIL_PATH, 'okto.png'))
+	li=xbmcgui.ListItem("Okto",iconImage="DefaultVideo.png", thumbnailImage=os.path.join(THUMBNAIL_PATH, 'okto.png'))
 	u=sys.argv[0]+"?mode=3&channel=okto"
 	xbmcplugin.addDirectoryItem(addon_handle,u,li,True)
 
-	li=xbmcgui.ListItem("6. Suria",iconImage="DefaultVideo.png", thumbnailImage=os.path.join(THUMBNAIL_PATH, 'suria.gif'))
+	li=xbmcgui.ListItem("Suria",iconImage="DefaultVideo.png", thumbnailImage=os.path.join(THUMBNAIL_PATH, 'suria.gif'))
 	u=sys.argv[0]+"?mode=3&channel=suria"
 	xbmcplugin.addDirectoryItem(addon_handle,u,li,True)
 
-	li=xbmcgui.ListItem("7. Vasantham",iconImage="DefaultVideo.png", thumbnailImage=os.path.join(THUMBNAIL_PATH, 'vasantham.jpg'))
+	li=xbmcgui.ListItem("Vasantham",iconImage="DefaultVideo.png", thumbnailImage=os.path.join(THUMBNAIL_PATH, 'vasantham.jpg'))
 	u=sys.argv[0]+"?mode=3&channel=vasantham"
 	xbmcplugin.addDirectoryItem(addon_handle,u,li,True)
 
@@ -102,7 +101,7 @@ def channel_youtube(user):
 	data=open_url(youtube_url)
 	showlist  = re.compile('dir="ltr" title="(.+?)".+?watch\?v=(.+?)&amp;.+?">(.+?)</a>.+?<li>(.+?)</li><li class="yt-lockup-deemphasized-text">(.+?)</li>').findall(data)
 	
-	if user is "channelnewsasia":
+	if user == "channelnewsasia":
 		li=xbmcgui.ListItem("CNA @ Live Broadcast", iconImage="DefaultVideo.png", thumbnailImage=os.path.join(THUMBNAIL_PATH, 'cna.png'))
 		li.setInfo( type="Video", infoLabels={ "Title": "CNA @ Live Broadcast" } )
 		li.setProperty('IsPlayable', 'true')
@@ -121,6 +120,7 @@ def channel_youtube(user):
 	xbmcplugin.endOfDirectory(addon_handle)
 
 def playVimeo(url):
+
 	videodata=open_url(url)
 	match=re.compile('"profile".+?"url":"(.+?)",.+?bitrate":(.+?),"').findall(videodata)
 	x=0
@@ -208,25 +208,26 @@ def htmlParse(str):
 	return str
 			
 def playVideo(url, title):
-		progress = xbmcgui.DialogProgress()
-		progress.create('SG!TV', 'Finding Stream')
-		progress.update(0, "SG!TV", "Loading link")
-		videodata=open_url(url)
-		progress.update(25, "SG!TV", "Loading link")
-		match=re.compile("{&quot;formatCode&quot;:&quot;(...)&quot;,&quot;url&quot;:&quot;(.+?)&quot;,").findall(videodata)
-		max = len(match)
-		progress.update(50, "SG!TV", "Processing information")
-		x=0
-		for formatcode, url_quality in match:
-			if int(formatcode) > x: 
-				video_url=url_quality
-				x=int(formatcode)
-		progress.update(70, "SG!TV", "Finding best quality link" )		
-		video_url=htmlParse(video_url)
-		listitem = xbmcgui.ListItem(title, iconImage = "DefaultVideo.png", thumbnailImage = xbmc.getInfoImage( "ListItem.Thumb" ))
-		progress.update(100, "", "Preparing to play" )
-		progress.close()
-		xbmc.Player( xbmc.PLAYER_CORE_AUTO ).play(video_url, listitem)
+	progress = xbmcgui.DialogProgress()
+	progress.create('SG!TV', 'Finding Stream')
+	progress.update(0, "SG!TV", "Loading link")
+	videodata=open_url(url)
+	progress.update(25, "SG!TV", "Loading link")
+	match=re.compile("{&quot;formatCode&quot;:&quot;(...)&quot;,&quot;url&quot;:&quot;(.+?)&quot;,").findall(videodata)
+	max = len(match)
+	progress.update(50, "SG!TV", "Processing information")
+	x=0
+	for formatcode, url_quality in match:
+		if int(formatcode) > x: 
+			video_url=url_quality
+			x=int(formatcode)
+	progress.update(70, "SG!TV", "Finding best quality link" )		
+
+	video_url=htmlParse(video_url)
+	listitem = xbmcgui.ListItem(title, iconImage = "DefaultVideo.png", thumbnailImage = xbmc.getInfoImage( "ListItem.Thumb" ))
+	progress.update(100, "", "Preparing to play" )
+	progress.close()
+	xbmc.Player( xbmc.PLAYER_CORE_AUTO ).play(video_url, listitem)
 		
 def timecheck():
 	from datetime import datetime

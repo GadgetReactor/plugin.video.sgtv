@@ -1,7 +1,7 @@
 plugin.video.sgtv
 =================
-XBMC/Kodi Addon for Singapore TV (Mediacorp 5/8, Channel U, CNA, Vasantham, Suria, ViddSee, WahBanana)
-=================
+
+An XBMC/Kodi Addon for Singapore TV (Mediacorp 5/8, Channel U, CNA, Vasantham, Suria, ViddSee, WahBanana)
 
 SG!TV was first released on 2012 Sep 03 - http://www.gadgetreactor.com/portfolio/sgtv/ primarily for myself to catch
 up on local Mediacorp (Singapore) shows. 

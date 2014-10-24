@@ -12,8 +12,11 @@
         <provides>video</provides>
   </extension>
   <extension point="xbmc.addon.metadata">  
-    <summary>Singapore TV Video Add-on</summary>
-    <description>Singapore Mediacorp TV Stream, re-watch your favourite local shows, or catch live Channel NewsAsia.</description>
+
+  <summary lang="en">Singapore TV Video Add-on</summary>
+    <description lang="en">Singapore Mediacorp TV Stream, re-watch your favourite local shows, or catch live Channel NewsAsia.</description>
     <platform>all</platform>
-  </extension>
+	<language>en</language>
+
+	</extension>
 </addon>

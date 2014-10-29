@@ -14,7 +14,7 @@ def openUrl(url):
 	retries = 0
 	while retries < 2:
 		try:
-			req = urllib2.Request(url)
+			req = urllib2.Request(url, None, {'User-Agent':'Mozilla/5.0 (Windows NT 6.3; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/37.0.2062.124 Safari/537.36'})
 			content = urllib2.urlopen(req)
 			if content.info().getheader('Content-Encoding') == 'gzip':
 				buf = StringIO( content.read())

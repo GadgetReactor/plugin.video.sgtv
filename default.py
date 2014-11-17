@@ -1,4 +1,5 @@
 import sys, xbmc, xbmcgui, xbmcplugin, urllib, urllib2, urlparse, re, string, os, traceback, time, datetime, xbmcaddon
+
 import simplejson as json
 import brightcove
 
@@ -27,19 +28,16 @@ def openUrl(url):
 			return data
 			
 		except urllib2.HTTPError,e:
-			print __addon__ + ' - Error code: ', e.code
 			if e.code == 500:
 				dialog = xbmcgui.Dialog()
-				ok = dialog.ok(__addon__, 'Sorry, the server seems to be down. Please try again later')
+				ok = dialog.ok(__addon__, __language__(32000))
 				main()
 			retries += 1
-			print __addon__ + ' - Retries: ' + str(retries)
 			time.sleep(2)
 			continue
 		else:
 			break
-	else:
-		print 'Fetch of ' + url + ' failed after ' + str(retries) + 'tries.'
+
 
 def openJson(url):
 	req = urllib2.Request(url, None, {'user-agent':'Mozilla/Firefox'})

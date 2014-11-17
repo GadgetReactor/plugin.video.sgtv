@@ -14,21 +14,27 @@ GadgetReactor
 =================
 Changelog
 =================
-V1.5 - 2014-10-23
+V1.5.1
+Updated revision numbering
+Updated Addon.xml 
+Updated icon
+Remove untranslatable text used in dialogs
+
+V1.5.0 - 2014-10-23
 Major changes to the backend
 - New parsing logic
 - Ability to load thumbnails
 New channels, CNA, WahBanana, ViddSee
 
-V1.4 (Internal)
+V1.4.0 (Internal)
 
-V1.3 - 2014-10-14
+V1.3.0 - 2014-10-14
 Interim fixes
 Accomodate changes to new website backend on xinmsn / catchup tv
 
-V1.2 (Internal)
+V1.2.0 (Internal)
 
-V1.1 - 2012-12-04
+V1.1.0 - 2012-12-04
 Bugfixes
-V1.0 - 2012-09-03
+V1.0.0 - 2012-09-03
 First public release

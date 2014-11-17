@@ -8,8 +8,6 @@
     <import addon="script.module.simplejson" version="2.0.10" />
     <import addon="plugin.video.youtube" version="4.4.10" />
     <import addon="script.module.pyamf" version="0.6.2"/>
-    <import addon="script.module.pyamf" version="0.6.2"/>
-    <import version="3.3.0" addon="script.module.simplejson"/>
   </requires>
   
   <extension point="xbmc.python.pluginsource" library="default.py">

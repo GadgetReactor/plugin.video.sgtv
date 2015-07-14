@@ -4,16 +4,21 @@ plugin.video.sgtv
 An XBMC/Kodi Addon for Singapore TV (Mediacorp 5/8, Channel U, CNA, Vasantham, Suria, ViddSee, WahBanana)
 
 SG!TV was first released on 2012 Sep 03 - http://www.gadgetreactor.com/portfolio/sgtv/ primarily for myself to catch
-up on local Mediacorp (Singapore) shows. 
+up on local Mediacorp (Singapore) shows.
 
 It is now published on Github.
 
 Sean Seah
+sean@gadgetreactor.com
 GadgetReactor
 
 =================
 Changelog
 =================
+
+V1.6.1 - 2015-07-14
+Increase Regexp matches
+Return more shows in channel listing
 
 V1.6.0 - 2015-07-10
 Updated changes for new Toggle Page
@@ -26,7 +31,7 @@ Updated regular expressions to cope with website changes
 
 V1.5.1 - 2014-11-17
 Updated revision numbering
-Updated Addon.xml 
+Updated Addon.xml
 Updated icon
 Remove untranslatable text used in dialogs
 

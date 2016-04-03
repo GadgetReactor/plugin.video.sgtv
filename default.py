@@ -1,5 +1,4 @@
 import sys, xbmc, xbmcgui, xbmcplugin, urllib, urllib2, urlparse, re, string, os, traceback, time, datetime, xbmcaddon
-
 import simplejson as json
 
 # GadgetReactor
@@ -43,6 +42,13 @@ def openJson(url):
 	opener = urllib2.build_opener()
 	f = opener.open(req)
 	data = json.load(f)
+	f.close()
+	return data
+
+def openXml(url):
+	req = urllib2.Request(url, None, {'user-agent':'Mozilla/Firefox'})
+	opener = urllib2.build_opener()
+	data = opener.open(req)
 	return data
 
 def main():
@@ -61,33 +67,53 @@ def main():
 
 def addXBMCItem(name, thumbnail, action_url, isFolder, Fanart_Image=None, infoLabels=None):
 	if isFolder:
-		li=xbmcgui.ListItem (name,iconImage="DefaultFolder.png", thumbnailImage=thumbnail)
+		li=xbmcgui.ListItem (name)
 		li.setProperty('Fanart_Image', Fanart_Image)
+		li.setArt({'thumb': thumbnail, 'poster': thumbnail})
 		u=sys.argv[0]+action_url
 	else:
-		li=xbmcgui.ListItem(name, iconImage="DefaultVideo.png", thumbnailImage=thumbnail)
+		li=xbmcgui.ListItem(name)
 		li.setInfo( type="Video", infoLabels=infoLabels )
+		li.setArt({'thumb': thumbnail, 'poster': thumbnail})
 		li.setProperty('IsPlayable', 'true')
 		u=action_url
-	if Fanart_Image is not None:
-		li.setProperty('Fanart_Image', Fanart_Image)
 
 	xbmcplugin.addDirectoryItem(addon_handle,u,li,isFolder)
 
-def channelShows(channel):
-	data=openUrl("http://tv.toggle.sg/en/%s/shows" % channel)
-	showlist  = re.compile('data-src.*?="(.+?)".+?href="(.+?)">(.+?)<').findall(data)
+def channelShows(channel, page=0):
+	if channel == "channel5":
+		geturl = "http://tv.toggle.sg/en/blueprint/servlet/toggle/bandlist?id=5211104&navigationId=5006598&channelId=331441&pageIndex="
+	elif channel == "channel8":
+		geturl = "http://tv.toggle.sg/en/blueprint/servlet/toggle/bandlist?id=5183464&navigationId=5006610&channelId=331442&pageIndex="
+	elif channel == "channelu":
+		geturl = "http://tv.toggle.sg/en/blueprint/servlet/toggle/bandlist?id=5184730&navigationId=5006618&channelId=331443&pageIndex="
+	elif channel == "suria":
+		geturl = "http://tv.toggle.sg/en/blueprint/servlet/toggle/bandlist?id=5185064&navigationId=5006594&channelId=331445&pageIndex="
+	elif channel == "vasantham":
+		geturl = "http://tv.toggle.sg/en/blueprint/servlet/toggle/bandlist?id=5185200&navigationId=5006602&channelId=331446&pageIndex="
+	elif channel == "okto":
+		geturl = "http://tv.toggle.sg/en/blueprint/servlet/toggle/bandlist?id=5184922&navigationId=5006614&channelId=331444&pageIndex="
+	geturl = geturl+str(page)+"&pageSize=18&isPortrait=0&sortBy=START_DATE&filterJson=%7B%7D&filterText"
+	data=openUrl(geturl)
+	showlist  = re.compile('img src="(.*?)".+?a href="(.+?)">(.+?)<\/a>').findall(data)
 
 	for image, url, show in showlist:
 		if "http" not in image:
-			image = "http://video.toggle.sg" + image
+			image = "http://tv.toggle.sg" + image
 		addXBMCItem (htmlParse(show), image, "?mode=getEpisodes&channel="+channel+"&show="+show+"&tab="+url+"&page=0", True)
+
+	pagination = re.compile ('pagination\'\),(.+?), (.+?), paginateLabel').search(data)
+	current_page = int( pagination.group (1) )
+	max_page = int ( pagination.group (2) )
+	if current_page < max_page:
+		page = str(current_page + 1)
+		addXBMCItem (__language__(31000), "", "?mode=loadChannel&channel="+channel+"&page="+page, True)
 
 	xbmc.executebuiltin("Container.SetViewMode(500)")
 
 def newestToggle(channel):
 	data=openUrl("http://video.toggle.sg/en/%s" % channel)
-	showlist  = re.compile('<div class="tg-teaser-item".*?data-src.*?="(.+?)".+?href="(.+?)">(.+?)<').findall(data)
+	showlist  = re.compile('srcset="(.+?)".+?href="(.+?)">(.+?)<').findall(data)
 
 	for image, url, show in showlist:
 		if "http" not in image:
@@ -102,29 +128,27 @@ def channelYoutube(user):
 		infoLabels={ "Title": "CNA @ Live Broadcast" }
 		addXBMCItem ("CNA @ Live Broadcast", os.path.join(__thumbpath__, 'cna.png'), 'http://cna_hls-lh.akamaihd.net/i/cna_en@8000/index_584_av-b.m3u8?sd=10&dw=50&rebase=on&e=870c0c22a42f4c5a', False, infoLabels=infoLabels)
 
-	youtube_url = "http://gdata.youtube.com/feeds/api/users/" + user + "/uploads?v=2&alt=json"
-	data = openJson (youtube_url)
+	youtube_url = "https://www.youtube.com/feeds/videos.xml?user=" + user
+	xbmc.log (youtube_url, xbmc.LOGNOTICE)
+	data = openUrl (youtube_url)
 
-	for entry in data["feed"]["entry"]:
-		title = entry["title"]["$t"]
-		video_id = entry["media$group"]["yt$videoid"]["$t"]
-		desc = entry["media$group"]["media$description"]["$t"]
-		image = "http://img.youtube.com/vi/" + video_id + "/0.jpg"
-		infoLabels={ "Title": title , "Plot" : desc }
-		addXBMCItem (title, image, "plugin://plugin.video.youtube/?path=root/video&action=play_video&videoid=" + video_id, False, infoLabels=infoLabels)
+	showlist  = re.compile('<media\:title>(.+?)<.+?\/v\/(.+?)\?.+?url="(.+?)".+?description>(.+?)<').findall(data)
 
-	try:
-		i = data["feed"]["openSearch$startIndex"]["$t"]
-		max = data["feed"]["openSearch$totalResults"]["$t"]
-	except:
-		i = max = 0
+	for title, url, image, desc in showlist:
+		infoLabels=	{
+					"title": title,
+					"plot": htmlParse(desc),
+					}
+		addXBMCItem (title, image, "plugin://plugin.video.youtube/?path=root/video&action=play_video&videoid=" + url, False, infoLabels=infoLabels)
 
 def resolveVimeo(url):
 
 	videodata=openUrl(url)
-	match=re.compile('"profile".+?"url":"(.+?)",.+?bitrate":(.+?),"').findall(videodata)
+	print url
+	print "HELLO_WORLD"
+	match=re.compile('width":(.+?),.+?url":"(.+?)"').findall(videodata)
 	x=0
-	for url_quality, bitrate in match:
+	for bitrate, url_quality in match:
 		if int(bitrate) > x:
 			video_url=url_quality
 			x=int(bitrate)
@@ -255,23 +279,7 @@ def resolveMSN(url):
 
 	progress.update(99, __addonname__,  __language__(31004)) # Ready to Play
 	progress.close()
-	"""
-	#for brightcove media, big thanks to Scotty Roscoe
 
-	html=videodata.replace('\r','').replace("&#39;","'").replace('&quot;','"')
-	if 'brightcove' in html:
-		blob = re.compile('<div class="wcvideoplayer" data-adpagegroups=(.+?)</div>').search(html).group(1)
-		videoId = re.compile('"providerId":"(.+?)"').search(blob).group(1)
-		video_url = brightcove.getBrightCoveUrl(videoId)
-
-	video_url=htmlParse(video_url)
-	listitem = xbmcgui.ListItem(path=video_url)
-	listitem.setInfo(type='Video', infoLabels= xbmc.getInfoLabel("ListItem.InfoLabel"))
-
-
-
-	xbmcplugin.setResolvedUrl(addon_handle, succeeded=True, listitem=listitem)
-	"""
 args = urlparse.parse_qs(sys.argv[2][1:])
 
 mode = args.get('mode', None)
@@ -286,7 +294,11 @@ elif mode[0]=='loadYoutube':
 	channelYoutube(user)
 elif mode[0] =='loadChannel':
 	channel = args['channel'][0]
-	channelShows(channel)
+	try:
+		page = args['page'][0]
+	except:
+		page = 0
+	channelShows(channel, page)
 elif mode[0] =='getNewest':
 	channel = args['channel'][0]
 	newestToggle(channel)

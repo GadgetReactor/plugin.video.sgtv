@@ -16,6 +16,10 @@ GadgetReactor
 Changelog
 =================
 
+V1.7.0 - 2016-04-03
+Updated for website changes
+Workaround due to Youtube V2 API deprecated
+
 V1.6.1 - 2015-07-14
 Increase Regexp matches
 Return more shows in channel listing

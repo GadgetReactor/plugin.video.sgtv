@@ -16,6 +16,9 @@ GadgetReactor
 Changelog
 =================
 
+V1.7.1 - 2016-08-27
+Added functionality to allow Live streaming of Toggle channels
+
 V1.7.0 - 2016-04-03
 Updated for website changes
 Workaround due to Youtube V2 API deprecated

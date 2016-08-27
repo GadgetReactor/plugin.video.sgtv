@@ -53,6 +53,7 @@ def openXml(url):
 
 def main():
 
+	addXBMCItem (__language__(29999), os.path.join(__thumbpath__, 'live.png'), "?mode=getNewest", True)
 	addXBMCItem (__language__(30000), os.path.join(__thumbpath__, 'newest.png'), "?mode=getNewest&channel=catchup-listing", True)
 	addXBMCItem (__language__(30001), os.path.join(__thumbpath__, 'channel5.jpg'), "?mode=loadChannel&channel=channel5", True)
 	addXBMCItem (__language__(30002), os.path.join(__thumbpath__, 'channel8.jpg'), "?mode=loadChannel&channel=channel8", True)
@@ -108,6 +109,32 @@ def channelShows(channel, page=0):
 	if current_page < max_page:
 		page = str(current_page + 1)
 		addXBMCItem (__language__(31000), "", "?mode=loadChannel&channel="+channel+"&page="+page, True)
+
+	xbmc.executebuiltin("Container.SetViewMode(500)")
+
+def getLiveFeeds():
+	show_ids = []
+	channels = collections.OrderedDict()
+	channels['Channel 5'] = 'channel5.jpg'
+	channels['Channel 8'] = 'channel8.jpg'
+	channels['Channel-U'] = 'channelu.jpg'
+	channels['Channel NewsAsia'] = 'cna.png'
+	channels['Suria'] = 'suria.gif'
+	channels['Vasantham'] = 'vasantham.jpg'
+	channelguide = "http://www.toggle.sg/en/channelguide"
+	base_url = "video.toggle.sg/en/video/channels"
+
+	data=openUrl(channelguide)
+	if data:
+		for channel, thumbnails in channels.iteritems():
+			show_id  = re.compile('channels/' + channel  + '/(\d+)',  re.IGNORECASE).findall(data)
+			if show_id:
+				show_ids.append((channel, show_id[0]))
+
+	for channel, show_id in show_ids:
+		image = os.path.join(__thumbpath__, channels[channel])
+		u=sys.argv[0]+"?mode=resolveMSN&url="+urllib.quote_plus(base_url + '/' + channel + '/' + show_id)
+		addXBMCItem (channel.replace('-', ' '), image, u, False, infoLabels="")
 
 	xbmc.executebuiltin("Container.SetViewMode(500)")
 
@@ -318,5 +345,7 @@ elif mode[0]=='resolveMSN':
 elif mode[0]=='resolveVimeo':
 	url = args['url'][0]
 	resolveVimeo(url)
+elif mode[0] =='getLiveFeeds':
+	getLiveFeeds()
 
 xbmcplugin.endOfDirectory(addon_handle)

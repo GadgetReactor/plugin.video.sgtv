@@ -1,4 +1,4 @@
-import sys, xbmc, xbmcgui, xbmcplugin, urllib, urllib2, urlparse, re, string, os, traceback, time, datetime, xbmcaddon
+import sys, xbmc, xbmcgui, xbmcplugin, urllib, urllib2, urlparse, re, string, os, traceback, time, datetime, xbmcaddon, collections
 import simplejson as json
 
 # GadgetReactor
@@ -53,7 +53,7 @@ def openXml(url):
 
 def main():
 
-	addXBMCItem (__language__(29999), os.path.join(__thumbpath__, 'live.png'), "?mode=getNewest", True)
+	addXBMCItem (__language__(29999), os.path.join(__thumbpath__, 'live.png'), "?mode=getLiveFeeds", True)
 	addXBMCItem (__language__(30000), os.path.join(__thumbpath__, 'newest.png'), "?mode=getNewest&channel=catchup-listing", True)
 	addXBMCItem (__language__(30001), os.path.join(__thumbpath__, 'channel5.jpg'), "?mode=loadChannel&channel=channel5", True)
 	addXBMCItem (__language__(30002), os.path.join(__thumbpath__, 'channel8.jpg'), "?mode=loadChannel&channel=channel8", True)

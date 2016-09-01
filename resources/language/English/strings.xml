@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <strings>
+    <string id="29999">LIVE</string>
     <string id="30000">Newest</string>
     <string id="30001">Channel 5</string>
     <string id="30002">Channel 8</string>

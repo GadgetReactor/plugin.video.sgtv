@@ -1,6 +1,7 @@
 import sys, xbmc, xbmcgui, xbmcplugin, urllib, urllib2, urlparse, re, string, os, traceback, time, datetime, xbmcaddon, collections, pickle
 import simplejson as json
 
+
 # GadgetReactor
 # http://www.gadgetreactor.com/portfolio/sgtv
 
@@ -10,6 +11,8 @@ __language__  = __addon__.getLocalizedString
 __thumbpath__ = os.path.join( __addon__.getAddonInfo( 'path' ), 'resources', 'media')
 __resources__ = os.path.join( __addon__.getAddonInfo( 'path' ), 'resources')
 __profile__ = xbmc.translatePath(__addon__.getAddonInfo('profile')).decode('utf-8')
+if not os.path.exists(__profile__):
+    os.makedirs(__profile__)
 
 def openUrl(url):
 	retries = 0
@@ -110,7 +113,7 @@ def channelShows(channel, page=0):
 
 def getLiveFeeds():
 	show_ids = []
-	channels = collections.OrderedDict()
+	channels = {} # collections.OrderedDict() not suppored on Kodi 16.1 Android
 	channels['Channel 5'] = 'channel5.jpg'
 	channels['Channel 8'] = 'channel8.jpg'
 	channels['Channel-U'] = 'channelu.jpg'
@@ -127,6 +130,7 @@ def getLiveFeeds():
 			if show_id:
 				show_ids.append((channel, show_id[0]))
 
+	show_ids.sort(key=lambda show:show[0])
 	for channel, show_id in show_ids:
 		image = os.path.join(__thumbpath__, channels[channel])
 		u=sys.argv[0]+"?mode=resolveMSN&url="+urllib.quote_plus(base_url + '/' + channel + '/' + show_id)
@@ -330,7 +334,7 @@ def newSearch(query=""):
 	searchUrl = searchUrl1 + title + searchUrl2
 	data = openJson(searchUrl)
 	if query == "":
-		searchpath = os.path.join(__resources__, 'search.xml')
+		searchpath = os.path.join(__profile__, 'search.xml')
 		with open (searchpath, 'rb') as fp:
 			itemlist = pickle.load(fp)
 		itemlist.append(vq)
